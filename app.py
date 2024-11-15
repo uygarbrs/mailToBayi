@@ -12,7 +12,7 @@ def webhook():
         print(data)
     else:
         print(".....................")
-    return {"deneme"}
+    return {"result": "deneme"}
 
 
 
