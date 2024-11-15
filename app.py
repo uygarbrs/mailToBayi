@@ -13,7 +13,7 @@ app = Flask(__name__)
 # E-posta gönderme fonksiyonu
 def send_email(pdf_path, recipient_email):
     sender_email = "uygarb00@gmail.com"  # Gönderen e-posta adresi
-    sender_password = "UgiTheBugi31+"  # E-posta şifresi (Gmail için uygulama parolası kullanabilirsiniz)
+    sender_password = "vlvp vvwj khzb xnas"  # E-posta şifresi (Gmail için uygulama parolası kullanabilirsiniz)
 
     # E-posta içeriği
     msg = MIMEMultipart()
