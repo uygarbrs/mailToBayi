@@ -42,7 +42,14 @@ def webhook():
 
         pdf_path = "/tmp/response.pdf"
         create_pdf(answers, pdf_path)
-        return send_file(pdf_path, as_attachment=True, download_name="response.pdf")
+
+        if os.path.exists(pdf_path):
+            print(f"PDF dosyası başarıyla oluşturuldu: {pdf_path}")
+        else:
+            print("PDF dosyası oluşturulamadı!")
+
+            # PDF dosyasını istemciye gönderiyoruz
+        return send_file(pdf_path, as_attachment=False, mimetype='application/pdf')
     else:
         return {"result": "AN ERROR OCCURRED"}
 
