@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file
 import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib.colors import blue
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -41,7 +42,7 @@ def send_email(pdf_path, recipient_email):
 
 
 # PDF oluşturma fonksiyonu
-def create_pdf(data, filename):
+def create_pdf(questions, answers, filename):
     c = canvas.Canvas(filename, pagesize=letter)
     width, height = letter  # Sayfa boyutu
 
@@ -51,18 +52,24 @@ def create_pdf(data, filename):
 
     # Veriyi yazdırma
     y_position = height - 100
-    for item in data:
-        if 't' in item:
+    for question, answer in zip(questions, answers):
+        if 't' in answer:
             c.setFont("Helvetica", 12)
-            c.drawString(100, y_position, f"t: {item['t']}")
+            c.drawString(100, y_position, f"{question}: {answer['t']}")
             y_position -= 20
-        elif 'urls' in item and 'downloadUrl' in item['urls'][0]:
-            download_url = item['urls'][0]['downloadUrl']
-            photo_label = "foto"  # Foto etiketini oluşturuyoruz
+        elif 'urls' in answer and 'downloadUrl' in answer['urls'][0]:
+            download_url = answer['urls'][0]['downloadUrl']
+            photo_label = question  # Foto etiketini oluşturuyoruz
 
             c.setFont("Helvetica", 12)
+            c.setFillColor(blue)
             text_width = c.stringWidth(photo_label)  # Metnin genişliğini alıyoruz
             c.drawString(100, y_position, photo_label)
+
+            # Alt çizgi ekleme
+            underline_y = y_position - 2
+            c.setStrokeColor(blue)
+            c.line(100, underline_y, 100 + text_width, underline_y)
 
             # Metnin üzerine tıklanabilir bağlantı ekliyoruz
             link_x_start = 100
@@ -80,15 +87,11 @@ def webhook():
     data = request.json  # Gelen form verisini JSON formatında alıyoruz
     if data:
         print(data)
+        questions = data['form']['questions']
         answers = [item for item in data['answer']['answers']]
-        for answer in answers:
-            if 't' in answer:
-                print(answer['t'])
-            elif 'urls' in answer:
-                print(answer['urls'][0]['downloadUrl'])
 
         pdf_path = "/tmp/response.pdf"
-        create_pdf(answers, pdf_path)
+        create_pdf(questions, answers, pdf_path)
 
         # Send mail
         recipient_email = "uygar.hatipoglu@sabanciuniv.edu"  # Alıcı e-posta adresi
