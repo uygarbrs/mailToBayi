@@ -57,8 +57,15 @@ def create_pdf(data, filename):
             c.drawString(100, y_position, f"t: {item['t']}")
             y_position -= 20
         elif 'urls' in item and 'downloadUrl' in item['urls'][0]:
+            download_url = item['urls'][0]['downloadUrl']
+            photo_label = "foto"  # Foto etiketini oluşturuyoruz
+
+            # Kısa metni (foto1, foto2) tıklanabilir bağlantı olarak ekliyoruz
             c.setFont("Helvetica", 12)
-            c.drawString(100, y_position, f"Download URL: {item['urls'][0]['downloadUrl']}")
+            c.drawString(100, y_position, f"{photo_label}: ")
+            c.linkURL(download_url, (
+            100 + len(photo_label) * 7, y_position, 100 + len(photo_label + ': ') * 7 + 150, y_position + 12), relative=0)
+
             y_position -= 20
 
     c.save()
