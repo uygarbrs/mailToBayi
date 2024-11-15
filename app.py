@@ -2,8 +2,43 @@ from flask import Flask, request, jsonify, send_file
 import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 app = Flask(__name__)
+
+
+# E-posta gönderme fonksiyonu
+def send_email(pdf_path, recipient_email):
+    sender_email = "uygarb00@gmail.com"  # Gönderen e-posta adresi
+    sender_password = "UgiTheBugi31+"  # E-posta şifresi (Gmail için uygulama parolası kullanabilirsiniz)
+
+    # E-posta içeriği
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = recipient_email
+    msg['Subject'] = 'Webhook Verisi PDF Dosyası'
+
+    # PDF dosyasını ekle
+    with open(pdf_path, "rb") as attachment:
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f"attachment; filename={os.path.basename(pdf_path)}")
+        msg.attach(part)
+
+    try:
+        # SMTP sunucusuna bağlan
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(sender_email, sender_password)  # Giriş yap
+            text = msg.as_string()  # Mesajı string formatına çevir
+            server.sendmail(sender_email, recipient_email, text)  # E-posta gönder
+            print("E-posta başarıyla gönderildi.")
+    except Exception as e:
+        print(f"E-posta gönderme hatası: {e}")
+
 
 # PDF oluşturma fonksiyonu
 def create_pdf(data, filename):
@@ -28,6 +63,7 @@ def create_pdf(data, filename):
 
     c.save()
 
+
 # Webhook URL'sine bir POST isteği geldiğinde çalışacak route
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -43,16 +79,19 @@ def webhook():
         pdf_path = "/tmp/response.pdf"
         create_pdf(answers, pdf_path)
 
+        # Send mail
+        recipient_email = "uygar.hatipoglu@sabanciuniv.edu"  # Alıcı e-posta adresi
+        send_email(pdf_path, recipient_email)
+
         if os.path.exists(pdf_path):
             print(f"PDF dosyası başarıyla oluşturuldu: {pdf_path}")
         else:
             print("PDF dosyası oluşturulamadı!")
 
-            # PDF dosyasını istemciye gönderiyoruz
+        # PDF dosyasını istemciye gönderiyoruz
         return send_file(pdf_path, as_attachment=False, mimetype='application/pdf')
     else:
         return {"result": "AN ERROR OCCURRED"}
-
 
 
 if __name__ == '__main__':
