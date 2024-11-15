@@ -9,8 +9,12 @@ app = Flask(__name__)
 def webhook():
     data = request.json  # Gelen form verisini JSON formatında alıyoruz
     if data:
-        #answers = data['form']['answers']
-        print(data)
+        answers = [item for item in data['answer']['answers']]
+        for answer in answers:
+            if 't' in answer:
+                print(answer['t'])
+            elif 'urls' in answer:
+                print(answer['urls'][0]['downloadUrl'])
     else:
         print(".....................")
     return {"result": "deneme"}
