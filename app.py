@@ -60,11 +60,14 @@ def create_pdf(data, filename):
             download_url = item['urls'][0]['downloadUrl']
             photo_label = "foto"  # Foto etiketini oluşturuyoruz
 
-            # Kısa metni (foto1, foto2) tıklanabilir bağlantı olarak ekliyoruz
             c.setFont("Helvetica", 12)
-            c.drawString(100, y_position, f"{photo_label}: ")
-            c.linkURL(download_url, (
-            100 + len(photo_label) * 7, y_position, 100 + len(photo_label + ': ') * 7 + 150, y_position + 12), relative=0)
+            text_width = c.stringWidth(photo_label)  # Metnin genişliğini alıyoruz
+            c.drawString(100, y_position, photo_label)
+
+            # Metnin üzerine tıklanabilir bağlantı ekliyoruz
+            link_x_start = 100
+            link_x_end = link_x_start + text_width
+            c.linkURL(download_url, (link_x_start, y_position - 2, link_x_end, y_position + 10), relative=0)
 
             y_position -= 20
 
