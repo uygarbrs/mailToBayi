@@ -19,7 +19,8 @@ def webhook():
     data = request.json  # Gelen form verisini JSON formatında alıyoruz
     if data:
         print(data)
-
+    else:
+        print("aaaaaaaaaa")
 
 
 if __name__ == '__main__':
