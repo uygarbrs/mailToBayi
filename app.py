@@ -84,7 +84,7 @@ def create_pdf(questions, answers, filename):
             c.setFillColor(black)
             c.drawString(100, y_position, f"{question['question']}: {answer['b']}")
         elif 'dw' in answer:
-            download_url = answer['more']['downloadUrl']
+            download_url = answer['more']['url']
             photo_label = question['question']
 
             # Set color
@@ -103,7 +103,7 @@ def create_pdf(questions, answers, filename):
             link_x_end = link_x_start + text_width
             c.linkURL(download_url, (link_x_start, y_position - 2, link_x_end, y_position + 10), relative=0)
         elif 'f' in answer:
-            download_url = answer['more']['downloadUrls'][0]
+            download_url = answer['more']['urls'][0]
             photo_label = question['question']  # Foto etiketini oluşturuyoruz
 
             # Set color
