@@ -47,29 +47,68 @@ def create_pdf(questions, answers, filename):
     width, height = letter  # Sayfa boyutu
 
     # Başlık
-    c.setFont("Helvetica", 16)
-    c.drawString(100, height - 50, "Webhook Verileri")
+    title = "New Response"
+    c.setFont("Helvetica-Bold", 20)
+
+    text_width = c.stringWidth(title)
+    c.drawString((width - text_width) / 2, height - 50, title)
 
     # Veriyi yazdırma
     y_position = height - 100
     for question, answer in zip(questions, answers):
+        c.setFont("Helvetica", 14)
         if 't' in answer:
-            c.setFont("Helvetica", 12)
             c.setFillColor(black)
             c.drawString(100, y_position, f"{question['question']}: {answer['t']}")
-            y_position -= 20
+        elif 'd' in answer:
+            c.setFillColor(black)
+            c.drawString(100, y_position, f"{question['question']}: {answer['d']}")
+        elif 'fn' in answer:
+            c.setFillColor(black)
+            c.drawString(100, y_position, f"{question['question']}: {answer['fn']['f']} {answer['fn']['l']}")
+        elif 'p' in answer:
+            c.setFillColor(black)
+            c.drawString(100, y_position, f"{question['question']}: {answer['p']['p']}")
+        elif 'a' in answer:
+            c.setFillColor(black)
+            c.drawString(100, y_position, f"{question['question']}: {answer['a']['a1']}")
+        elif 'n' in answer:
+            c.setFillColor(black)
+            c.drawString(100, y_position, f"{question['question']}: {answer['n']}")
         elif 'c' in answer:
             choice = answer['c'][0]['t']
-            c.setFont("Helvetica", 12)
+
             c.setFillColor(black)
             c.drawString(100, y_position, f"{question['question']}: {choice}")
-            y_position -= 20
+        elif 'b' in answer:
+            c.setFillColor(black)
+            c.drawString(100, y_position, f"{question['question']}: {answer['b']}")
+        elif 'dw' in answer:
+            download_url = answer['more']['downloadUrl']
+            photo_label = question['question']
+
+            # Set color
+            c.setFillColor(blue)
+
+            text_width = c.stringWidth(photo_label)  # Metnin genişliğini alıyoruz
+            c.drawString(100, y_position, photo_label)
+
+            # Alt çizgi ekleme
+            underline_y = y_position - 2
+            c.setStrokeColor(blue)
+            c.line(100, underline_y, 100 + text_width, underline_y)
+
+            # Metnin üzerine tıklanabilir bağlantı ekliyoruz
+            link_x_start = 100
+            link_x_end = link_x_start + text_width
+            c.linkURL(download_url, (link_x_start, y_position - 2, link_x_end, y_position + 10), relative=0)
         elif 'f' in answer:
-            download_url = answer['urls'][0]['downloadUrl']
+            download_url = answer['more']['downloadUrls'][0]
             photo_label = question['question']  # Foto etiketini oluşturuyoruz
 
-            c.setFont("Helvetica", 12)
+            # Set color
             c.setFillColor(blue)
+            
             text_width = c.stringWidth(photo_label)  # Metnin genişliğini alıyoruz
             c.drawString(100, y_position, photo_label)
 
@@ -83,7 +122,7 @@ def create_pdf(questions, answers, filename):
             link_x_end = link_x_start + text_width
             c.linkURL(download_url, (link_x_start, y_position - 2, link_x_end, y_position + 10), relative=0)
 
-            y_position -= 20
+        y_position -= 20
 
     c.save()
 
