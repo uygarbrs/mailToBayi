@@ -57,6 +57,11 @@ def create_pdf(questions, answers, filename):
             c.setFont("Helvetica", 12)
             c.drawString(100, y_position, f"{question['question']}: {answer['t']}")
             y_position -= 20
+        elif 'c' in answer:
+            choice = answer['c'][0]['t']
+            c.setFont("Helvetica", 12)
+            c.drawString(100, y_position, f"{question['question']}: {choice}")
+            y_position -= 20
         elif 'urls' in answer and 'downloadUrl' in answer['urls'][0]:
             download_url = answer['urls'][0]['downloadUrl']
             photo_label = question['question']  # Foto etiketini oluşturuyoruz
