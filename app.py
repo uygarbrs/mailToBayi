@@ -86,6 +86,7 @@ def create_pdf(questions, answers, filename):
 def webhook():
     data = request.json  # Gelen form verisini JSON formatında alıyoruz
     if data:
+        print('\n')
         print(data)
         questions = data['form']['questions']
         answers = [item for item in data['answer']['answers']]
