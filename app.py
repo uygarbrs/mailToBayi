@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from reportlab.lib.colors import blue
+from reportlab.lib.colors import blue, black
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -55,14 +55,16 @@ def create_pdf(questions, answers, filename):
     for question, answer in zip(questions, answers):
         if 't' in answer:
             c.setFont("Helvetica", 12)
+            c.setFillColor(black)
             c.drawString(100, y_position, f"{question['question']}: {answer['t']}")
             y_position -= 20
         elif 'c' in answer:
             choice = answer['c'][0]['t']
             c.setFont("Helvetica", 12)
+            c.setFillColor(black)
             c.drawString(100, y_position, f"{question['question']}: {choice}")
             y_position -= 20
-        elif 'urls' in answer and 'downloadUrl' in answer['urls'][0]:
+        elif 'f' in answer:
             download_url = answer['urls'][0]['downloadUrl']
             photo_label = question['question']  # Foto etiketini oluşturuyoruz
 
