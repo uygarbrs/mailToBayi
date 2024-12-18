@@ -8,6 +8,8 @@ services:
     deploy:
       restart_policy:
         condition: any
+    networks:
+      - host
     secrets:
       - mail_email
       - mail_pass
@@ -17,3 +19,8 @@ secrets:
     external: true
   mail_pass:
     external: true
+
+networks:
+  host:
+    external: true
+    name: host
