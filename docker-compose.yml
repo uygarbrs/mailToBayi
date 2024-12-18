@@ -3,6 +3,8 @@ version: '3.8'
 services:
   app:
     image: uygar00/mail-to-bayi
+    ports:
+      - "5000:5000"
     deploy:
       restart_policy:
         condition: any
