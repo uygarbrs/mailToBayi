@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    image: uygar00/mail-to-bayi
+    deploy:
+      restart_policy:
+        condition: any
+    secrets:
+      - mail_email
+      - mail_pass
+
+secrets:
+  mail_email:
+    external: true
+  mail_pass:
+    external: true
